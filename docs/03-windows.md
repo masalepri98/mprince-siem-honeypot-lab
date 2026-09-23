@@ -38,7 +38,13 @@ Restart the agent with `Restart-Service WazuhSvc`. Run a harmless program such a
 
 ## 3. Add a small FIM test directory
 
-Create `C:\LabEvidence\FIM-Test` locally. Inside the existing `<syscheck>` section of the Windows agent's `ossec.conf`, add:
+Create `C:\LabEvidence\FIM-Test` locally **before restarting the agent**:
+
+```powershell
+New-Item -ItemType Directory -Force 'C:\LabEvidence\FIM-Test' | Out-Null
+```
+
+Inside the existing `<syscheck>` section of the Windows agent's `ossec.conf`, add:
 
 ```xml
 <directories realtime="yes">C:\LabEvidence\FIM-Test</directories>
@@ -47,7 +53,6 @@ Create `C:\LabEvidence\FIM-Test` locally. Inside the existing `<syscheck>` secti
 Restart the agent. Create, edit, and delete `C:\LabEvidence\FIM-Test\probe.txt` and find the file integrity alerts in Wazuh. Monitor only this dedicated directory first; broad home-directory monitoring can produce noisy events and expose personal filenames. Wazuh requires the directory to exist before restart for real-time monitoring.
 
 ```powershell
-New-Item -ItemType Directory -Force 'C:\LabEvidence\FIM-Test' | Out-Null
 Set-Content 'C:\LabEvidence\FIM-Test\probe.txt' 'first'
 Add-Content 'C:\LabEvidence\FIM-Test\probe.txt' 'second'
 Remove-Item 'C:\LabEvidence\FIM-Test\probe.txt'

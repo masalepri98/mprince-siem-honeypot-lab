@@ -27,9 +27,11 @@ Allow outbound HTTPS, DNS, and package/image downloads. **Before starting the in
 
 ## 2. Install T-Pot Standard / Hive
 
-Connect to the new host using its initial SSH port. Inspect the current [T-Pot installation instructions](https://github.com/telekom-security/tpotce#installation) and supported OS list. On a minimal Debian host with `git` and `curl` installed, as the regular sudo-capable user:
+Connect to the new host using its initial SSH port. Inspect the current [T-Pot installation instructions](https://github.com/telekom-security/tpotce#installation) and supported OS list. On a minimal Debian host, as the regular sudo-capable user:
 
 ```bash
+sudo apt-get update
+sudo apt-get install -y git curl
 git clone https://github.com/telekom-security/tpotce.git ~/tpotce
 cd ~/tpotce
 git rev-parse HEAD
