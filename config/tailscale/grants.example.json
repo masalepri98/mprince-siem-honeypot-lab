@@ -5,6 +5,11 @@
   },
   "grants": [
     {
+      "src": ["autogroup:member"],
+      "dst": ["autogroup:self"],
+      "ip": ["*"]
+    },
+    {
       "src": ["tag:lab-tpot"],
       "dst": ["tag:lab-siem"],
       "ip": ["tcp:1514", "tcp:1515"]
@@ -18,6 +23,14 @@
       "src": ["autogroup:admin"],
       "dst": ["tag:lab-tpot"],
       "ip": ["tcp:64295", "tcp:64297"]
+    }
+  ],
+  "ssh": [
+    {
+      "action": "check",
+      "src": ["autogroup:member"],
+      "dst": ["autogroup:self"],
+      "users": ["autogroup:nonroot", "root"]
     }
   ]
 }

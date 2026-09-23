@@ -2,9 +2,11 @@
 
 **Outcome:** the T-Pot VPS sends Cowrie and Suricata events to the local Wazuh manager without exposing the manager through the home router.
 
-## 1. Create a dedicated tailnet policy
+## 1. Set the tailnet policy before joining the VPS
 
-Use a dedicated Tailscale tailnet for this lab if you do not already manage one. Before connecting the VPS, replace the tailnet's broad default grant with a narrow policy. [`config/tailscale/grants.example.json`](../config/tailscale/grants.example.json) allows the tagged T-Pot node to initiate **only TCP 1514 and 1515** to the tagged Wazuh node; the admin's devices may reach management ports. Adapt the admin selector to your account and validate the policy in the Tailscale console. Tailscale [grants](https://tailscale.com/docs/features/access-control/grants) are additive: a pre-existing `*:*` rule would still allow broader access.
+In [Tailscale Admin → Access controls](https://console.tailscale.com/admin/acls/file), open the JSON editor. Save a local copy of the current policy, then use [`config/tailscale/grants.example.json`](../config/tailscale/grants.example.json) as the replacement policy. Preview the rules before saving. The example retains the default Tailscale SSH rule and lets each user reach their own untagged devices through `autogroup:member` → `autogroup:self`. All current personal devices in this lab use the same account and are untagged, so they remain reachable. If you later share devices with other users or add tagged services, add their needed rules explicitly.
+
+The example allows the tagged T-Pot node to initiate **only TCP 1514 and 1515** to the tagged Wazuh node; admin-owned devices may reach management ports. A tag gives the VPS a separate identity, so the personal-device grant does not include it. Remove the current broad `*` → `*` grant when replacing the policy: Tailscale [grants](https://tailscale.com/docs/features/access-control/grants) are additive, so leaving that grant would keep unrestricted access. Check the final policy in the console before joining the VPS.
 
 Do **not** enable Tailscale subnet routing, exit-node service, SSH sharing, or public Funnel on the T-Pot VPS. The goal is a single agent-to-manager path.
 
