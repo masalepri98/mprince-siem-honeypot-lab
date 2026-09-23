@@ -1,0 +1,13 @@
+<!-- Add these blocks INSIDE the existing ossec_config element on the T-Pot VPS agent.
+     Replace __TPOT_DATA_PATH__ with an absolute path such as /home/user/tpotce/data.
+     Confirm eve.json exists before enabling the Suricata block. -->
+<localfile>
+  <location>__TPOT_DATA_PATH__/cowrie/log/cowrie.json</location>
+  <log_format>json</log_format>
+  <label key="lab.source">tpot-cowrie</label>
+</localfile>
+<localfile>
+  <location>__TPOT_DATA_PATH__/suricata/log/eve.json</location>
+  <log_format>json</log_format>
+  <label key="lab.source">tpot-suricata</label>
+</localfile>

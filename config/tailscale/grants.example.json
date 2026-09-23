@@ -1,0 +1,23 @@
+{
+  "tagOwners": {
+    "tag:lab-siem": ["autogroup:admin"],
+    "tag:lab-tpot": ["autogroup:admin"]
+  },
+  "grants": [
+    {
+      "src": ["tag:lab-tpot"],
+      "dst": ["tag:lab-siem"],
+      "ip": ["tcp:1514", "tcp:1515"]
+    },
+    {
+      "src": ["autogroup:admin"],
+      "dst": ["tag:lab-siem"],
+      "ip": ["tcp:22", "tcp:443"]
+    },
+    {
+      "src": ["autogroup:admin"],
+      "dst": ["tag:lab-tpot"],
+      "ip": ["tcp:64295", "tcp:64297"]
+    }
+  ]
+}

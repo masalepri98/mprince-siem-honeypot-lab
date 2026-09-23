@@ -1,0 +1,25 @@
+# Local inventory and secrets
+inventory.private.md
+*.env
+!.env.example
+*.key
+*.pem
+*.p12
+*.ovpn
+auth.json
+secrets/
+
+# Captured data and private evidence
+evidence/raw/
+captures/
+downloads/
+*.pcap
+*.pcapng
+*.vmdk
+*.ova
+*.vdi
+*.vhdx
+*.qcow2
+*.log
+*.jsonl
+!samples/*.jsonl
