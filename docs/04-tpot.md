@@ -25,18 +25,33 @@ Use the provider firewall as the first boundary:
 
 Allow outbound HTTPS, DNS, and package/image downloads. **Before starting the installer, pre-allow TCP 64295 from your admin IP.** The installer moves real SSH there, while TCP 22 becomes a honeypot. Keep the provider console/recovery access available in case SSH changes unexpectedly. Do not open Wazuh ports 1514/1515 on the VPS or home router.
 
+If the VPS image starts an SMTP service such as Exim on TCP 25, T-Pot will stop before making changes because its honeypots need that port. On a dedicated honeypot VPS that does not send local mail, identify the listener and disable only that mail service. This leaves SSH running:
+
+```bash
+sudo ss -ltnp '( sport = :25 )'
+sudo systemctl disable --now exim4
+sudo ss -ltnp '( sport = :25 )'  # no listener means the port is free
+```
+
+If the listener is not Exim, identify its systemd unit with `sudo systemctl list-sockets` or `sudo ss -lntup` before changing it. Disabling Exim also stops local mail delivery, including any system alerts sent through it.
+
 ## 2. Install T-Pot Standard / Hive
 
-Connect to the new host using its initial SSH port. Inspect the current [T-Pot installation instructions](https://github.com/telekom-security/tpotce#installation) and supported OS list. On a minimal Debian host, as the regular sudo-capable user:
+Connect to the new host using its initial SSH port. Inspect the current [T-Pot installation instructions](https://github.com/telekom-security/tpotce#installation) and supported OS list. On a minimal Debian host, as the regular sudo-capable user, install `tmux` so the interactive installer keeps running if SSH disconnects. **Run from that user's home**, not `/root/tpotce`:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y git curl
-git clone https://github.com/telekom-security/tpotce.git ~/tpotce
+sudo apt-get install -y git curl tmux
+cd "$HOME"
+git clone https://github.com/telekom-security/tpotce.git
 cd ~/tpotce
 git rev-parse HEAD
+tmux new -s tpot-install
+# In the tmux shell:
 ./install.sh
 ```
+
+If `~/tpotce` is already a valid clone, skip `git clone`. If an earlier attempt was run from `/root/tpotce`, leave that copy alone and use the clone in your regular user's home. You can detach from `tmux` with **Ctrl+B**, then **D**. If SSH drops before the reboot, reconnect on TCP 64295 and run `tmux attach -t tpot-install` to see the installer. A reboot ends the tmux session; after reboot, check T-Pot's service status instead. Keep the provider console available for recovery. Do not put the T-Pot web password on the command line or in shell history.
 
 Choose **Standard / Hive** when prompted, create the T-Pot web user, review the installer's stated changes, and reboot as directed. Do not choose **Sensor**: upstream requires a separate T-Pot Hive for that mode, whereas this architecture sends events to Wazuh.
 
