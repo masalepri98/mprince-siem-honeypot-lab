@@ -53,6 +53,17 @@ tmux new -s tpot-install
 
 If `~/tpotce` is already a valid clone, skip `git clone`. If an earlier attempt was run from `/root/tpotce`, leave that copy alone and use the clone in your regular user's home. You can detach from `tmux` with **Ctrl+B**, then **D**. If SSH drops before the reboot, reconnect on TCP 64295 and run `tmux attach -t tpot-install` to see the installer. A reboot ends the tmux session; after reboot, check T-Pot's service status instead. Keep the provider console available for recovery. Do not put the T-Pot web password on the command line or in shell history.
 
+If the Ansible playbook stops at its first task with `Duplicate become password prompt` and `Sorry, try again`, the **BECOME password** was rejected by `sudo`. It is the Linux password for the account running `./install.sh`, not the Contabo root password, SSH key passphrase, or T-Pot web password. Confirm it interactively without printing it:
+
+```bash
+sudo -k
+sudo -v
+sudo id -u  # expected: 0
+sudo -k     # clear the cached authorization before rerunning the installer
+```
+
+If `sudo -v` fails, reset that user's password from the provider console using a root session (`passwd <OS_USER>`), then repeat the check. Do not set passwordless sudo just to bypass the error. Re-run `./install.sh` as the regular user and enter the verified password when Ansible asks for `BECOME password`. Ansible failed before its first playbook task, so this error alone does not require a VPS reinstall.
+
 Choose **Standard / Hive** when prompted, create the T-Pot web user, review the installer's stated changes, and reboot as directed. Do not choose **Sensor**: upstream requires a separate T-Pot Hive for that mode, whereas this architecture sends events to Wazuh.
 
 After reboot, use the real SSH port:
