@@ -32,6 +32,8 @@ flowchart LR
 
 The VPS must permit the selected honeypot ports and have a supported **minimal** Linux image. T-Pot's supported distribution list changes; at the time this guide was written it listed Debian 13 and Ubuntu 26.04. Check [T-Pot's current requirements](https://github.com/telekom-security/tpotce#system-requirements) *before* ordering a VPS. Standard / Hive is larger than the 8 GB/128 GB T-Pot Sensor because it also hosts the Elastic stack and dashboard.
 
+For a dated price and fit comparison, see [VPS options and buying checks](docs/00-vps-options.md).
+
 ## A-to-Z route
 
 Follow in order. Each chapter ends with a checkpoint; do not proceed past a failed checkpoint.

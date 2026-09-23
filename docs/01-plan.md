@@ -20,6 +20,8 @@ This Windows machine was checked with 32 GB RAM, an i7-12700K, and substantial f
 
 T-Pot's current Standard / Hive guidance calls for about **16 GB RAM and 256 GB SSD**. It includes its own Elastic stack. Confirm your provider's VPS cost, bandwidth rules, public IPv4 availability, and firewall controls before ordering. Decide how long to keep raw events in Wazuh and T-Pot. T-Pot's default raw-log persistence and index lifecycle are 30 days; change them only after measuring disk growth. Wazuh's local 50 GB OVA can fill sooner with high-volume honeypot events, so start with only Cowrie and Suricata alerts and inspect disk weekly.
 
+Use the dated [VPS comparison](00-vps-options.md) to select a plan and check its current checkout total.
+
 ## 4. Prepare private storage
 
 Create a private evidence folder outside this Git repository. Save VM snapshots, raw logs, PCAPs, credentials, captured files, and the private inventory there. Git should contain **config templates and sanitized examples** only. Use a password manager for Wazuh, VPS, Tailscale, T-Pot, and VirusTotal credentials.
