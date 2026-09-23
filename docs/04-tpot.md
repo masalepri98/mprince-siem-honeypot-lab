@@ -104,6 +104,33 @@ ssh -i "$env:USERPROFILE\.ssh\tpot_lab_ed25519" -p 64295 -L 64297:127.0.0.1:6429
 
 Open `https://localhost:64297` and verify the T-Pot landing page and Kibana. The certificate may be self-signed; inspect it as you would any management UI. Later you can use the VPS tailnet address for management. T-Pot's [remote access documentation](https://github.com/telekom-security/tpotce#remote-access-and-tools) describes the ports and accounts.
 
+### Recover a forgotten T-Pot web login
+
+The T-Pot web login is a BasicAuth account chosen during Hive installation; it is separate from the OS user on SSH port 64295. There is no shared default web password. From an SSH session as the regular OS user, use the upstream [`genuser.sh`](https://github.com/telekom-security/tpotce/blob/master/genuser.sh) helper to make a new account. Because that helper **adds** users, clear the old `WEB_USER` value first if its password is unknown:
+
+```bash
+cd ~/tpotce
+test -f .env && grep -q '^WEB_USER=' .env || { echo 'T-Pot .env or WEB_USER is missing'; exit 1; }
+backup="$HOME/tpot-env-backup-$(date +%Y%m%d-%H%M%S)"
+install -m 600 .env "$backup"
+sed -i 's/^WEB_USER=.*/WEB_USER=/' .env
+./genuser.sh
+```
+
+At the helper's prompts, choose a new web username and password and store them in your password manager. The helper writes a hashed credential to `.env`; do not post its output or the `.env` file. Confirm that it says `Done` and that `WEB_USER` is populated **without printing its value**:
+
+```bash
+if test -n "$(sed -n 's/^WEB_USER=//p' .env)"; then
+  echo 'Web user configured'
+  sudo systemctl stop tpot && sudo systemctl start tpot
+else
+  cp "$backup" .env
+  echo 'No new web user; restored the backup'
+fi
+```
+
+T-Pot's [user management instructions](https://github.com/telekom-security/tpotce#add-users-to-nginx-t-pot-webui) require a T-Pot restart for the new account to take effect. After services return, try the management URL in a fresh private browser window so cached BasicAuth credentials cannot interfere. Keep TCP 64297 closed publicly. If the helper fails before creating the user, restore the backup with `cp "$backup" .env` before restarting T-Pot.
+
 ## 4. Set a baseline
 
 Record the T-Pot Git revision, selected compose file, service health, log paths, and provider firewall rules. Take a VPS snapshot if your provider offers one. Decide whether to keep T-Pot's default community data submission; [upstream explains the opt-out](https://github.com/telekom-security/tpotce#community-data-submission). Do not commit captured payloads or attacker credentials.
