@@ -8,6 +8,8 @@ In [Tailscale Admin → Access controls](https://console.tailscale.com/admin/acl
 
 The example allows the tagged T-Pot node to initiate **only TCP 1514 and 1515** to the tagged Wazuh node; admin-owned devices may reach management ports. A tag gives the VPS a separate identity, so the personal-device grant does not include it. Remove the current broad `*` → `*` grant when replacing the policy: Tailscale [grants](https://tailscale.com/docs/features/access-control/grants) are additive, so leaving that grant would keep unrestricted access. Check the final policy in the console before joining the VPS.
 
+If `tailscale up --advertise-tags=tag:lab-tpot` reports `requested tags ... are invalid or not permitted`, verify that the **saved tailnet policy** contains `"tag:lab-tpot": ["autogroup:admin"]` under `tagOwners` and that you authenticate using an Owner/Admin account in this same tailnet. A copy of the policy in GitHub does not configure Tailscale by itself. After saving the policy, retry on the VPS with `sudo tailscale login --advertise-tags=tag:lab-tpot` and use the fresh sign-in URL it prints. Do not share that URL. Tailscale's [tag documentation](https://tailscale.com/docs/features/tags) describes tag ownership and CLI tagging.
+
 Do **not** enable Tailscale subnet routing, exit-node service, SSH sharing, or public Funnel on the T-Pot VPS. The goal is a single agent-to-manager path.
 
 ## 2. Install Tailscale on the Wazuh OVA
