@@ -16,6 +16,8 @@ Test-NetConnection <WAZUH_LAN_IP> -Port 1514
 
 Wait for the host to show **Active** in Agents management. If enrollment works but status stays disconnected, check TCP 1514, the Windows agent log at `C:\Program Files (x86)\ossec-agent\ossec.log`, and the Wazuh manager log at `/var/ossec/logs/ossec.log`.
 
+If the service stops immediately and `ossec.log` reports `Invalid server address found: '0.0.0.0'` followed by `No client configured`, the installer left the manager address as a placeholder. Back up `ossec.conf`, then set `<client><server><address>` to the Wazuh VM's actual LAN IP or hostname (`<WAZUH_LAN_IP>`). Save valid XML, start `WazuhSvc` from an elevated PowerShell session, and check for `Connected to the server` in `ossec.log`. The agent may restart itself once after receiving its enrollment key; confirm it remains Running and appears Active in the dashboard.
+
 ## 2. Install Sysmon from Microsoft
 
 Download [Sysmon](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) from Microsoft Sysinternals and choose a reviewed configuration, such as the [SwiftOnSecurity Sysmon configuration](https://github.com/SwiftOnSecurity/sysmon-config). Save your selected XML in the Sysmon download folder as `sysmonconfig.xml`, inspect its rules, and record its commit/version. In elevated PowerShell from that folder:
