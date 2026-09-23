@@ -4,7 +4,21 @@
 
 ## 1. Install the local Cowrie rules
 
-Copy [`config/wazuh/tpot_rules.xml`](../config/wazuh/tpot_rules.xml) to `/var/ossec/etc/rules/tpot_rules.xml` **on the Wazuh VM**. Use `sudo` and keep the file root-owned. Check that IDs `100500–100505` do not collide with other custom rules. The rules match Cowrie's documented `eventid` values using Wazuh's built-in JSON decoder; no custom decoder is required for these fields.
+Copy [`config/wazuh/tpot_rules.xml`](../config/wazuh/tpot_rules.xml) to `/var/ossec/etc/rules/tpot_rules.xml` **on the Wazuh VM**. The OVA has a text-only console, so use SSH from Windows for ordinary copy/paste and `scp` for files. The dashboard `admin` account is different from the VM's `wazuh-user` account. From Windows PowerShell, with the repo cloned locally:
+
+```powershell
+Set-Location 'C:\Users\mprin\Documents\PT_upskillin\mprince-siem-honeypot-lab'
+scp .\config\wazuh\tpot_rules.xml wazuh-user@<WAZUH_LAN_IP>:/home/wazuh-user/tpot_rules.xml
+ssh wazuh-user@<WAZUH_LAN_IP>
+```
+
+Enter the **VM operating-system password** when prompted. In the SSH session, place the file under Wazuh's custom rules directory:
+
+```bash
+sudo install -o root -g root -m 0644 ~/tpot_rules.xml /var/ossec/etc/rules/tpot_rules.xml
+```
+
+Check that IDs `100500–100505` do not collide with other custom rules. The rules match Cowrie's documented `eventid` values using Wazuh's built-in JSON decoder; no custom decoder is required for these fields.
 
 Before restarting the manager, test each sample line from [`samples/cowrie-events.jsonl`](../samples/cowrie-events.jsonl):
 
